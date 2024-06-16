@@ -6,6 +6,22 @@ The exploration is comprised of several major sub-components. First, there is an
 
 ## Requirements
 
+1. Python installed
+2. PIP installed
 
 ## Getting Started
 
+1. Enter the project directory
+2. Set up and activate a Python virtual environment
+
+```
+python -m venv .venv
+source .venv/bin/activate
+```
+   
+4. Install and run Jupyter Lab
+
+```
+pip install jupyterlab   
+jupyter lab
+```
