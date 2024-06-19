@@ -20,6 +20,14 @@ def print_model_info(model):
     
     print(f'model : on GPU : {next(model.parameters()).is_cuda}')
 
+
+def print_device_map(model):
+    import pprint
+    
+    pp = pprint.PrettyPrinter(indent=2)
+    pp.pprint(model.hf_device_map)
+
+
 def print_device_info():
     import pynvml
     
