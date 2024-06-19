@@ -5,11 +5,8 @@ import streamlit as st
 from transformers import AutoTokenizer
 from transformers import pipeline
 from transformers import TextIteratorStreamer
-from transformers import BitsAndBytesConfig
 
-import torch
-
-model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
+model_id = "models/meta-llama__Meta-Llama-3-70B-Instruct"
 
 generate_kwargs = {
     "max_new_tokens": 1024,
@@ -23,8 +20,8 @@ generate_kwargs = {
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
-            "role": "user",
-            "content": "You are a friendly chatbot who is curious about the user. You will ask the user a question to get to know them better. You will keep your responses short."
+            "role": "system",
+            "content": "You are the user's friend and you care about their well being. You will converse with the user and attempt to get to know them better. You will only ask one question in each of your responses."
         }
     ]
 
@@ -33,23 +30,14 @@ if "pipe" not in st.session_state:
     
     streamer = TextIteratorStreamer(tokenizer, skip_prompt=True)
     st.session_state.streamer = streamer
-
-    # bnb_config = BitsAndBytesConfig(
-    #     load_in_4bit=True,
-    #     bnb_4bit_use_double_quant=True,
-    #     bnb_4bit_quant_type="nf4",
-    #     bnb_4bit_compute_dtype=torch.bfloat16
-    # )
     
     pipe = pipeline(
         "conversational",
         model=model_id,
         model_kwargs={
-            "torch_dtype": "auto",
-            # "quantization_config": bnb_config,
-            # "attn_implementation": "flash_attention_2"
+            "low_cpu_mem_usage": True,
+            "device_map": "sequential"
         },
-        device_map="auto",
         tokenizer=tokenizer,
         streamer=streamer
     )
@@ -70,7 +58,7 @@ if "pipe" not in st.session_state:
     for text in streamer:
         generated_text += text
         
-st.title("MeChat")
+st.title("Meuse Chat")
 
 # Display chat messages from history on app rerun. Skip first system message and its response.
 for message in st.session_state.messages[1:]:
